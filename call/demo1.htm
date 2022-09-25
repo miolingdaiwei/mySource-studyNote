@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="btn">hit me </button>
+    <script type="text/javascript">
+        function Func() {
+            this.age = 18;
+            console.log(this.age);
+        }
+
+        Func();
+        const funcObj = new Func();
+        console.log(`func is ${typeof func} but funcObj is ${typeof funcObj}`);
+
+        // 结果
+        // 18
+        // 18
+        // func is function but funcObj is object
+        // console.log(func.__proto__);
+        console.log(Func.prototype);
+        console.log(Func, 'S');
+        console.log(funcObj);
+        const a = Object(2)
+        console.log(a);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+id需要3 标签不需要 $（“”） $(DOM) 转换 
+#id  id选择器￥（“id”）
+$("div")  $("*) $("div" "calss"....)
+ $(.class)
+ref和reactive改变页面，不改变原数据
+
+reactive解构辅助不改变响应式，ref不会，ref单一数值，reactive一般对象数组等

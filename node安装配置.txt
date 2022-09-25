@@ -1,0 +1,24 @@
+直接安装nvm
+
+提前新建node 和nvm文件夹
+
+setting 。txt添加
+node_mirror: https://npm.taobao.org/mirrors/node/
+
+npm_mirror: https://npm.taobao.org/mirrors/npm/
+
+ 管理员权限下安装和use   node
+ 
+
+node 会生成一个快捷方式，它实际上是当前使用的node版本
+
+install -g表示安装在global目录下，这个文件夹没有可以自己创建
+
+
+若想全局安装，当然要配置环境变量 为global配置环境变量  新建系统变量，为global下的modeles，取名NODE_PATH  然后用户变量的path添加global路径
+
+
+安装什么都可以，在giobals下，找不到就配置环境
+
+.全局安装完npm的时候，需要关掉终端窗口重新打开，才能装得上cnpm。
+

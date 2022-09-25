@@ -1,0 +1,8 @@
+git init 
+git add .
+git commit -m ""
+创建远程仓库  不用添加任何东西，描述就可
+git remote  取名为origin 
+git remote -v  查看
+git push -u(保存push的方法) origin master:master   本地:远程
+下一次直接git push就好啦

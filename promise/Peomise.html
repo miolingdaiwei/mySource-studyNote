@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="btn">Hti me</button>
+    <script type="text/javascript">
+        const time = 2000;  //延时时间
+        document.getElementById('btn').addEventListener("click", () => {
+            const promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (time <= 2000) {
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                }, time)
+            });
+            promise.then(() => {
+                console.log(promise);
+            })
+            // promise.then(() => {
+            //     alert(`You Click me ${time / 1000} minutes ago!`);
+            // }, () => {
+            //     alert("Message transport overtime!");
+            // }).then(() => {
+            //     alert('seconed invoke')
+            // }).then(() => {
+            //     alert("")
+            // })
+            // promise.then(() => {
+            //     alert("another success invoke")
+            // }, () => {
+            //     alert("another defeat invoke")
+            // })
+        })
+    </script>
+</body>
+
+</html>
