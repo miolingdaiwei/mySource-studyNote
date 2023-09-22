@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <a href="https://www.baidu.com">
+        <button id="btn">点击</button>
+    </a>
+
+    <div onclick='alert("click father")'>
+        <button id="proBtn"> 阻止冒泡</button>
+    </div>
+
+    <div onclick="alert('click father')">
+        <a href="https://www.baidu.com">
+            <button id="reBtn">
+                return false
+            </button>
+        </a>
+    </div>
+
+    <script>
+        document.getElementById("btn").onclick = (e) => {
+            e.preventDefault()
+            // 阻止默认事件（跳转）
+            console.log(e)
+        }
+
+        document.getElementById("proBtn").onclick = (e) => {
+            // 阻止冒泡
+            e.stopPropagation();
+            console.log("son hit");
+        }
+
+        document.getElementById("reBtn").onclick = (e) => {
+            console.log("hit son");
+            return false
+        }
+
+        const fun = (e) => {
+            console.log(e);
+            // 这种方式拿不到e
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul id="traffic" class="container">
+        <li class="wait">
+        </li>
+        <li class="wait">
+        </li>
+        <li class="wait">
+        </li>
+    </ul>
+
+    <script type="text/javascript">
+        const traffic = document.getElementById('traffic');
+
+        function wait(time) {
+            return new Promise(resolve => setTimeout(resolve, time))
+        }
+
+        function setState(state) {
+            traffic.className = state;
+        }
+
+        async function start() {
+            //noprotect
+            while (1) {
+                setState("wait");
+                await wait(1000);
+                setState("stop");
+                await wait(1000);
+                setState("pass");
+                await wait(1000);
+            }
+        }
+
+        start();
+    </script>
+</body>
+
+<style>
+    * {
+        margin: 0%;
+        padding: 0%;
+    }
+
+    .stop .pass .wait {
+        display: flex;
+        list-style-type: none;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    li {
+        margin: 10px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        list-style-type: none;
+    }
+
+    .stop li:first-child {
+        background-color: red;
+    }
+
+    .stop li:last-child,
+    li:nth-child(2) {
+        background-color: gray;
+    }
+
+    .pass li:last-child {
+        background-color: green;
+    }
+
+    .pass li:first-child,
+    li:nth-child(2) {
+        background-color: gray;
+    }
+
+    .wait li:last-child,
+    li:first-child {
+        background-color: gray;
+    }
+
+    .wait li:nth-child(2) {
+        background-color: yellow;
+    }
+</style>
+
+</html>
