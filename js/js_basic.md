@@ -76,3 +76,19 @@ console.log(s3.sex);     //  通过构造函数继承，可以读取公有变量
 这样能够满足完美继承，1.原型链指向父函数，也就是可以读取原型链上的值 2.子函数的构造函数指向父函数 3. 可以读取父函数内的共享变量
 
 具体在[extend.js](./extend.js)
+
+
+## 浏览器模式
+
+目前浏览器的排版引擎使用三种模式：怪异模式（Quirks mode）、接近标准模式（Almost standards mode）、以及标准模式（Standards mode）。
+
+在**怪异模式**下，排版会模拟 Navigator 4 与 Internet Explorer 5 的非标准行为。
+
+
+DOCTYPE决定排版模式  
+
+```
+<!doctype html>
+```
+
+标准模式
