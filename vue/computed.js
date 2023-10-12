@@ -87,7 +87,7 @@ const computed = (getter) => {
     let isRun = true, res;
     // res 是conputed返回的结果，当读取value时，会执行函数，isrun为true就执行并返回依赖函数执行的结果，然后设置为false
     // 而当
-    const effectRes = effect(getter, {
+    const effectFn = effect(getter, {
         doNow: false,
         scheduler(func) {
             isRun = true;
@@ -100,7 +100,7 @@ const computed = (getter) => {
     const obj = {
         get value() {
             if (isRun) {
-                res = effectRes()
+                res = effectFn()
                 isRun = false
             }
             track(obj, 'value')
@@ -128,3 +128,4 @@ console.log(res.value);
 
 
 // 当执行computed或者watcheffect时，computed函数会执行生成依赖
+

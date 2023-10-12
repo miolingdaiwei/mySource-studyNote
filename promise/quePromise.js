@@ -11,7 +11,7 @@ function quePromise(extuc) {
     // resolve的执行函数
     const resolve = (value) => {
         queueMicrotask(() => {
-            // 延时后改变值
+            //   延时后改变值
             //   将函数集都调用就可以了
             this.data = value;
             this.status = "resolve";
@@ -27,6 +27,7 @@ function quePromise(extuc) {
 
 // then方法,在原型上添加
 quePromise.prototype.then = function (onResolveBack) {
+    // 保存this  this永远指向生成的promise对象
     var self = this;
     // 返回一个新的Promise
     return new quePromise((resolve) => {

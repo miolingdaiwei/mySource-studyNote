@@ -26,6 +26,6 @@ console.log(f.__proto__);                //{ sex: 'nan' }
 console.log(Function.constructor);             //[Function: Function]
 console.log(Function.prototype.constructor);   //[Function: Function]
 console.log(Object.getPrototypeOf(f).constructor);   //[Function: fun]
-//  也就是说原型也是对象，也有内存，也有constructor 
+//  也就是说原型也是对象，也有内存，也有constructor 即函数也是对象，也有内存
 
 // 函数的原型链一律指向Object.prototype

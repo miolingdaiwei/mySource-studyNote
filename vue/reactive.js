@@ -58,8 +58,6 @@ function trigger(target, key) {
     // 将set里面的依赖函数依次执行
 }
 
-
-
 function effect(fn) {
     const effectFn = () => {
         // 将Effect赋值和调用依赖函数写在里面也无所谓，因为set有去重的功能，而且依赖是永久添加的，但是会重复执行依赖
@@ -75,8 +73,9 @@ function effect(fn) {
         // 出栈栈顶，并将Effect回退
         sideEffect = effectStack[effectStack.length - 1]
     }
-    effectFn();
+    effectFn(); //第一次执行
     // 执行依次依赖函数，即是添加依赖函数！！！！
+    // return effectFn   返回，用于computed和watch进行调用执行
 }
 
 let person = {
@@ -95,7 +94,7 @@ effect(() => {
     // 1 依赖第一次赋值，执行，输出e1 done 
     // 3 trigger执行，再次输出e1 done
     console.log('effect1 done');
-    effect(() => {
+    let effectFn = effect(() => {
         // 依赖函数2
         // 2，依赖又被改为effect2，输出e2 done
         console.log('effect2 done');
@@ -106,7 +105,12 @@ effect(() => {
     p1 = p.name
     // 依赖添加，添加的是e2
     // 而如果是stack结构，依赖添加e1
+    effectFn()
 })
+
+const watch = (obj, callBack) => {
+    obj
+}
 
 p.name = "辉仔2"
 // 执行trigger
