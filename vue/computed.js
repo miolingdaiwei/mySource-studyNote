@@ -58,7 +58,6 @@ function trigger(target, key) {
 // 做一些改变来实现副作用,首先是想能够控制它不要立即执行，
 // 使用computed时，我们会返回一个新的值，所以当立即执行时，需要获取返回值
 function effect(fn, options = {}) {
-    // options 默认空对象
     let effectFn = () => {
         sideEffect = effectFn;
         effectStack.push(effectFn)
@@ -67,9 +66,6 @@ function effect(fn, options = {}) {
         console.log("effect");
         sideEffect = effectStack[effectStack.length - 1]
         return res;
-        // 依赖函数的返回值，也是computed的结果，需要就获取它
-        // 立即执行
-        // return;
     }
     effectFn.options = options  //挂载options,是挂在副作用函数身上的？
 
@@ -84,26 +80,13 @@ function effect(fn, options = {}) {
 
 
 const computed = (getter) => {
-    let isRun = true, res;
-    // res 是conputed返回的结果，当读取value时，会执行函数，isrun为true就执行并返回依赖函数执行的结果，然后设置为false
-    // 而当
+    let res;
     const effectFn = effect(getter, {
         doNow: false,
-        scheduler(func) {
-            isRun = true;
-            console.log('scheduler');
-            const res2 = func()
-            console.log(res2);
-            trigger(obj, 'value')
-        }
     })
     const obj = {
         get value() {
-            if (isRun) {
-                res = effectFn()
-                isRun = false
-            }
-            track(obj, 'value')
+            res = effectFn()
             return res
         }
     }
@@ -117,11 +100,11 @@ let person1 = Ractive({
 })
 
 const res = computed(() => {
-    console.log('重新计算');
-    return person1.name + person1.sex
+    console.log("执行回调");
+    return person1.age * 2
 })
-// console.log(person1.name)
-person1.name = "shh"
+console.log(res.value);
+person1.age = 2
 console.log(res.value);
 
 

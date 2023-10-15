@@ -1,6 +1,6 @@
-## vue的基本原理
+## vue 的基本原理
 
-创建vue实例的时候，vue会遍历data，用Object.defineProperty(Proxy)将data内的属性转为getter，setter拦截，并跟踪相关依赖。每个组件都有watcher实例，在组件渲染中将属性记录为依赖，然后setter中通知watcher重新计算，形成更新。
+创建 vue 实例的时候，vue 会遍历 data，用 Object.defineProperty(Proxy)将 data 内的属性转为 getter，setter 拦截，并跟踪相关依赖。每个组件都有 watcher 实例，在组件渲染中将属性记录为依赖，然后 setter 中通知 watcher 重新计算，形成更新。
 
 ## 双向数据绑定
 
@@ -8,10 +8,10 @@
 
 原理上简单来说由四个模块组成：
 
-1. observer：监听**所有数据**的变化，当数据变化时，通过wathcer是否需要更新。
-2. 订阅者wathcher，拿到新的值和旧的值，可以收到属性变化的通知，执行函数来更新视图。
-3. 消息订阅器Dep：因为由多个wather，因此需要Dep进行管理。
-4. compile解析器：扫描解析节点的相关指令，根据数据初始化数据。
+1. observer：监听**所有数据**的变化，当数据变化时，通过 wathcer 是否需要更新。
+2. 订阅者 wathcher，拿到新的值和旧的值，可以收到属性变化的通知，执行函数来更新视图。
+3. 消息订阅器 Dep：因为由多个 wather，因此需要 Dep 进行管理。
+4. compile 解析器：扫描解析节点的相关指令，根据数据初始化数据。
 
 ## watch
 
@@ -19,108 +19,183 @@
 
 ## mvvm
 
-mvc：：即model-数据，view-视图，controller-控制器。controller控制视图和数据的响应式更新。
+mvc：：即 model-数据，view-视图，controller-控制器。controller 控制视图和数据的响应式更新。
 
-mvvm：mvc的加强版。即model viewmodel view controller,这是因为mvc中controller往往变得十分冗杂，因此将controller中部分代码抽离，由viewModel来进行处理。
+mvvm：mvc 的加强版。即 model viewmodel view controller,这是因为 mvc 中 controller 往往变得十分冗杂，因此将 controller 中部分代码抽离，由 viewModel 来进行处理。
 
-## slot插槽
+## slot 插槽
 
-用于父子传递，是子组件的一个模板标签元素，渲染子组件的时候，若是遇到了slot，那么就对子组件内的slot进行替换，替换的来源是父组件在slot中写的标签属性，标签内的innerhtml。
+用于父子传递，是子组件的一个模板标签元素，渲染子组件的时候，若是遇到了 slot，那么就对子组件内的 slot 进行替换，替换的来源是父组件在 slot 中写的标签属性，标签内的 innerhtml。
 
 ## nexTick
 
-本质上是EventLoop的应用。通过mutationServer，promise，等异步任务来实现vue的异步。
-
+本质上是 EventLoop 的应用。通过 mutationServer，promise，等异步任务来实现 vue 的异步。
 
 ## 响应式
 
-我写了reactive到computed的代码，具体在 [响应式实现](../vue3-sourceCode/reactive.js)
+我写了 reactive 到 computed 的代码，具体在 [响应式实现](../vue3-sourceCode/reactive.js)
 
 这里简单梳理一下：
 
 ### 数据拦截
 
-首先是数据绑定需要先进行数据拦截，通过proxy进行拦截。
-
+首先是数据绑定需要先进行数据拦截，通过 proxy 进行拦截。
 
 ```js
 function Ractive(obj) {
-    return new Proxy(obj, {
-        // target是代理对象，key是读取或设置的属性名，receiver是创建出来的代理对象
-        get(target, key, receiver) {
-            // 收集依赖,可以收集多个依赖 一个数据源可以有多个依赖
-            track(target, key)
-            // 通过reflect来返回get值
-            return Reflect.get(target, key, receiver)
-        },
-        set(target, key, newVal, receiver) {
-            // 执行依赖
-            trigger(target, key)
-            Reflect.set(target, key, newVal, receiver)
-        }
-    })
+  return new Proxy(obj, {
+    // target是代理对象，key是读取或设置的属性名，receiver是创建出来的代理对象
+    get(target, key, receiver) {
+      // 收集依赖,可以收集多个依赖 一个数据源可以有多个依赖
+      track(target, key);
+      // 通过reflect来返回get值
+      return Reflect.get(target, key, receiver);
+    },
+    set(target, key, newVal, receiver) {
+      // 执行依赖
+      trigger(target, key);
+      Reflect.set(target, key, newVal, receiver);
+    },
+  });
 }
 ```
 
-proxy将对象的读取通过get和set拦截到，然后用reflect来完成相应的读取操作。那么在reflect反射执行之前就可以进行副作用函数的相关处理。即track收集和triggger执行。
+proxy 将对象的读取通过 get 和 set 拦截到，然后用 reflect 来完成相应的读取操作。那么在 reflect 反射执行之前就可以进行副作用函数的相关处理。即 track 收集和 triggger 执行。
 
-
-track和trigger其实很简单，就是分别做将依赖存进对应的set内，取到对应的存储依赖的set，执行set的每一项。其中tracker会判断activeEffect有没有值，没有就不需要执行。
+track 和 trigger 其实很简单，就是分别做将依赖存进对应的 set 内，取到对应的存储依赖的 set，执行 set 的每一项。其中 tracker 会判断 activeEffect 有没有值，没有就不需要执行。
 
 ```js
 function track(target, key) {
-    if (!sideEffect) return;
-    // 当没有effect加入时不操作
-    let depsMap = store.get(target)    //返回一个map，这个map存储对象为target的所有依赖
-    if (!depsMap) {
-        store.set(target, (depsMap = new Map()))
-        // weekMap读取到的map为空的话就为store添加，target为key，值为一个map，
-    }
+  if (!sideEffect) return;
+  // 当没有effect加入时不操作
+  let depsMap = store.get(target); //返回一个map，这个map存储对象为target的所有依赖
+  if (!depsMap) {
+    store.set(target, (depsMap = new Map()));
+    // weekMap读取到的map为空的话就为store添加，target为key，值为一个map，
+  }
 
-    let deps = depsMap.get(key)
-    // 此时deps为Set  它存储了target上属性为key的所有依赖
+  let deps = depsMap.get(key);
+  // 此时deps为Set  它存储了target上属性为key的所有依赖
 
-    if (!deps) {
-        // mao内添加set
-        depsMap.set(key, (deps = new Set()))
-    }
+  if (!deps) {
+    // mao内添加set
+    depsMap.set(key, (deps = new Set()));
+  }
 
-    deps.add(sideEffect)  //e2 e1
-    // 然后将依赖函数添加到set里面
+  deps.add(sideEffect); //e2 e1
+  // 然后将依赖函数添加到set里面
 }
 ```
 
-先有effect再有computed,watch，watchEffect。
+先有 effect 再有 computed,watch，watchEffect。
 
 ### 副作用函数
 
-effect就是副作用函数，同时一个属性可能有多个副作用。因此需要一个数据结构来存储这些副作用。
+effect 就是副作用函数，同时一个属性可能有多个副作用。因此需要一个数据结构来存储这些副作用。
 
-> 副作用的存储结构：  weekMap-存储组件内所有依赖，key是对象，value是这个对象的所有依赖，他是一个map。
+> 副作用的存储结构： weekMap-存储组件内所有依赖，key 是对象，value 是这个对象的所有依赖，他是一个 map。
 >
-> map存储单个对象的所有依赖，key是属性名，value是这个属性的所有依赖，值是Set。
+> map 存储单个对象的所有依赖，key 是属性名，value 是这个属性的所有依赖，值是 Set。
 >
-> set存储单个属性的所有依赖，执行副作用的时候就遍历Set执行就可以了。
+> set 存储单个属性的所有依赖，执行副作用的时候就遍历 Set 执行就可以了。
 
-effect代码则是较为复杂，绕一点的。我对代码进行了逐行分析注解
+effect 代码则是较为复杂，绕一点的。我对代码进行了逐行分析注解
 
 ```js
 function effect(fn) {
-    const effectFn = () => {
-        // 将Effect赋值和调用依赖函数写在里面也无所谓，因为set有去重的功能，而且依赖是永久添加的，但是会重复执行依赖
-        //函数？为什么要多次执行依赖函数呢？
+  const effectFn = () => {
+    // 将Effect赋值和调用依赖函数写在里面也无所谓，因为set有去重的功能，而且依赖是永久添加的，但是会重复执行依赖
+    //函数？为什么要多次执行依赖函数呢？
+    sideEffect = effectFn;
+    // trigger再次执行封装函数，fn()依赖函数被执行，又添加依赖e2，又添加依赖e1，但是set结构去重
+    // 执行封装函数，再将封装函数赋给Effect
+    effectStack.push(effectFn);
+    // 入栈
+    fn(); //执行依赖函数
+    // 当依赖函数执行完毕之后，再弹出。此时栈顶是e2，栈底是e1，递归effect的新依赖再栈顶
+    effectStack.pop();
+    // 出栈栈顶，并将Effect回退
+    sideEffect = effectStack[effectStack.length - 1];
+  };
+  effectFn();
+  // 执行依次依赖函数，即是添加依赖函数！！！！
+}
+
+let p = Ractive(person);
+
+let p1, p2;
+effect(() => {
+  // 依赖函数1
+  // 1 依赖第一次赋值，执行，输出e1 done
+  // 3 trigger执行，再次输出e1 done
+  console.log("effect1 done");
+  let effectFn = effect(() => {
+    // 依赖函数2
+    // 2，依赖又被改为effect2，输出e2 done
+    console.log("effect2 done");
+    // 4. trigger执行依赖，再次输出e2 done
+    p2 = p.sex;
+    // 依赖添加为e2
+  });
+  p1 = p.name;
+  // 依赖添加，添加的是e2
+  // 而如果是stack结构，依赖添加e1
+  // effectFn()
+});
+
+p.name = "辉仔2";
+// 执行trigger
+```
+
+总结来说其实 effect 其实很简单，只需要创建一个 effectFn 函数，函数里面对 activeEffect 进行赋值然后执行一次 effectFn 即可。当然对于 computed 这种需要延时的，需要将 effectFn 函数返回而不是立即执行。
+
+## computed
+
+计算属性，当数据更改时重新计算。当然是基于effect副作用去完成。
+
+```js
+// vue3的computed（计算属性） 有几个特点：能够获取新旧值，变值化时才执行，（不明显的一点，值没有发生改变，返回上次执行结果）
+// 做一些改变来实现副作用,首先是想能够控制它不要立即执行，
+// 使用computed时，我们会返回一个新的值，所以当立即执行时，需要获取返回值
+function effect(fn, options = {}) {
+    let effectFn = () => {
         sideEffect = effectFn;
-        // trigger再次执行封装函数，fn()依赖函数被执行，又添加依赖e2，又添加依赖e1，但是set结构去重
-        // 执行封装函数，再将封装函数赋给Effect
         effectStack.push(effectFn)
-        // 入栈
-        fn()//执行依赖函数 
-        // 当依赖函数执行完毕之后，再弹出。此时栈顶是e2，栈底是e1，递归effect的新依赖再栈顶
+        const res = fn()
+	// 将回调函数的执行放在依赖函数里面。
         effectStack.pop()
-        // 出栈栈顶，并将Effect回退
+        console.log("effect");
         sideEffect = effectStack[effectStack.length - 1]
+        return res;
     }
-    effectFn();
-    // 执行依次依赖函数，即是添加依赖函数！！！！
+    effectFn.options = options  //挂载options,是挂在副作用函数身上的？
+
+    if (options.doNow) {
+        // 如果为true，会先执行一次
+        effectFn()
+    }
+    return effectFn;
+    // 不管如何，最后都是将副作用函数返回
 }
 ```
+
+既然是延时的执行，那么就需要将effectFn返回，而不是立即执行。因为eccectFn本质就是执行回调函数。
+
+
+```js
+const computed = (getter) => {
+    let res;
+    const effectFn = effect(getter, {
+        doNow: false,
+    })
+    const obj = {
+        get value() {
+            res = effectFn()
+            return res
+        }
+    }
+    return obj;
+}
+```
+
+然后将返回值保存在属性value中即可，调用时读取返回值的value属性。就可以读取到发生数据变化后新的计算属性的值。

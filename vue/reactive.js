@@ -58,23 +58,24 @@ function trigger(target, key) {
     // 将set里面的依赖函数依次执行
 }
 
+// 原理就是外层依赖添加，然后执行回调，内层依赖添加，再执行回调，再pop内层依赖，再pop外层
 function effect(fn) {
+
     const effectFn = () => {
         // 将Effect赋值和调用依赖函数写在里面也无所谓，因为set有去重的功能，而且依赖是永久添加的，但是会重复执行依赖
-        //函数？为什么要多次执行依赖函数呢？
         sideEffect = effectFn;
-        // trigger再次执行封装函数，fn()依赖函数被执行，又添加依赖e2，又添加依赖e1，但是set结构去重
-        // 执行封装函数，再将封装函数赋给Effect
+        // 依赖赋值
         effectStack.push(effectFn)
-        // 入栈
-        fn()//执行依赖函数 
+        // 依赖数组push
+        fn()
+        //执行回调函数 
         // 当依赖函数执行完毕之后，再弹出。此时栈顶是e2，栈底是e1，递归effect的新依赖再栈顶
         effectStack.pop()
         // 出栈栈顶，并将Effect回退
         sideEffect = effectStack[effectStack.length - 1]
     }
-    effectFn(); //第一次执行
-    // 执行依次依赖函数，即是添加依赖函数！！！！
+
+    effectFn();
     // return effectFn   返回，用于computed和watch进行调用执行
 }
 
@@ -83,40 +84,18 @@ let person = {
     sex: "nan",
     age: 28
 }
-
-
-
 let p = Ractive(person)
-
 let p1, p2;
 effect(() => {
-    // 依赖函数1
-    // 1 依赖第一次赋值，执行，输出e1 done 
-    // 3 trigger执行，再次输出e1 done
     console.log('effect1 done');
-    let effectFn = effect(() => {
-        // 依赖函数2
-        // 2，依赖又被改为effect2，输出e2 done
+    effect(() => {
         console.log('effect2 done');
-        // 4. trigger执行依赖，再次输出e2 done
         p2 = p.sex
-        // 依赖添加为e2
+        // 触发track
     })
     p1 = p.name
-    // 依赖添加，添加的是e2
-    // 而如果是stack结构，依赖添加e1
-    effectFn()
+    // 触发track
 })
-
-const watch = (obj, callBack) => {
-    obj
-}
 
 p.name = "辉仔2"
 // 执行trigger
-
-
-// effect1 done
-// effect2 done
-// effect1 done
-// effect2 done
