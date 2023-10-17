@@ -1,0 +1,8 @@
+button{
+    /* margin: 0px;   //  没有用 只能提供父级元素font-size来去除空白*/
+    width: 40px;
+    height: 40px;
+}
+div{
+    font-size: 0%;
+}
