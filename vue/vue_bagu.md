@@ -151,51 +151,74 @@ p.name = "辉仔2";
 
 ## computed
 
-计算属性，当数据更改时重新计算。当然是基于effect副作用去完成。
+计算属性，当数据更改时重新计算。当然是基于 effect 副作用去完成。
 
 ```js
 // vue3的computed（计算属性） 有几个特点：能够获取新旧值，变值化时才执行，（不明显的一点，值没有发生改变，返回上次执行结果）
 // 做一些改变来实现副作用,首先是想能够控制它不要立即执行，
 // 使用computed时，我们会返回一个新的值，所以当立即执行时，需要获取返回值
 function effect(fn, options = {}) {
-    let effectFn = () => {
-        sideEffect = effectFn;
-        effectStack.push(effectFn)
-        const res = fn()
-	// 将回调函数的执行放在依赖函数里面。
-        effectStack.pop()
-        console.log("effect");
-        sideEffect = effectStack[effectStack.length - 1]
-        return res;
-    }
-    effectFn.options = options  //挂载options,是挂在副作用函数身上的？
+  let effectFn = () => {
+    sideEffect = effectFn;
+    effectStack.push(effectFn);
+    const res = fn();
+    // 将回调函数的执行放在依赖函数里面。
+    effectStack.pop();
+    console.log("effect");
+    sideEffect = effectStack[effectStack.length - 1];
+    return res;
+  };
+  effectFn.options = options; //挂载options,是挂在副作用函数身上的？
 
-    if (options.doNow) {
-        // 如果为true，会先执行一次
-        effectFn()
-    }
-    return effectFn;
-    // 不管如何，最后都是将副作用函数返回
+  if (options.doNow) {
+    // 如果为true，会先执行一次
+    effectFn();
+  }
+  return effectFn;
+  // 不管如何，最后都是将副作用函数返回
 }
 ```
 
-既然是延时的执行，那么就需要将effectFn返回，而不是立即执行。因为eccectFn本质就是执行回调函数。
-
+既然是延时的执行，那么就需要将 effectFn 返回，而不是立即执行。因为 eccectFn 本质就是执行回调函数。
 
 ```js
 const computed = (getter) => {
-    let res;
-    const effectFn = effect(getter, {
-        doNow: false,
-    })
-    const obj = {
-        get value() {
-            res = effectFn()
-            return res
-        }
-    }
-    return obj;
-}
+  let res;
+  const effectFn = effect(getter, {
+    doNow: false,
+  });
+  const obj = {
+    get value() {
+      res = effectFn();
+      return res;
+    },
+  };
+  return obj;
+};
 ```
 
-然后将返回值保存在属性value中即可，调用时读取返回值的value属性。就可以读取到发生数据变化后新的计算属性的值。
+然后将返回值保存在属性 value 中即可，调用时读取返回值的 value 属性。就可以读取到发生数据变化后新的计算属性的值。
+
+## 生命周期
+
+1. beforcreate
+2. created
+3. beforeMount
+4. mounted
+5. beforeUnmount
+6. unmounted
+7. 其中，mounted 之后，beforeUnmount 之间可以触发 beforeUpdate 和 updated。
+
+在 created 之后可以访问 data 和函数，mounted 可以访问 dom 节点。
+
+vue2 还有 destory 的两个周期函数，
+
+那 vue3 就不太一样了，setup 替代了 create 的两个周期函数，mount 和 unmount的四个周期函数 一致，也有update的两个周期函数，没有 destory 的周期函数。但是有activted的两个周期函数，负责管理keep-alive组件。同时还有onrendertrack和onrendertrjgger的debug函数。
+
+
+update本质上和watch一样通过发布订阅，依赖搜集实现，执行回调。
+
+
+## keep-aive
+
+用于缓存组件，返回页面，内容不变。

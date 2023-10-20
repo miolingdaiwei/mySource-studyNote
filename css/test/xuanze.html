@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>
+        <div class="fdiv">
+            aaa
+            <div class="sdiv">
+                dsd
+            </div>
+        </div>
+        <h2>
+            <!-- 这个div 不管是直接子代还是后代都匹配不到，因为他是
+            h2下的，不算在h1下 -->
+            <div>
+                sss
+            </div>
+        </h2>
+    </h1>
+</body>
+<style>
+    h1 {
+        width: 100%;
+        height: 400px;
+    }
+
+    h1>div {
+        height: 70%;
+        border: 2px aqua solid;
+    }
+
+    /* h1 div {
+        height: 150px;
+        border: 2px aqua solid;
+    } */
+    /* 后代下载器理解为可以到孙辈,曾孙被,只要div下还是div  */
+    /* 而直接子代只有儿子才可以 */
+</style>
+
+</html>
