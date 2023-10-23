@@ -215,10 +215,102 @@ vue2 还有 destory 的两个周期函数，
 
 那 vue3 就不太一样了，setup 替代了 create 的两个周期函数，mount 和 unmount的四个周期函数 一致，也有update的两个周期函数，没有 destory 的周期函数。但是有activted的两个周期函数，负责管理keep-alive组件。同时还有onrendertrack和onrendertrjgger的debug函数。
 
-
 update本质上和watch一样通过发布订阅，依赖搜集实现，执行回调。
-
 
 ## keep-aive
 
 用于缓存组件，返回页面，内容不变。
+
+
+## SPA
+
+simple page application单页面应用，相对的是多页面应用（MPA）。
+
+>  只有一个主页面的应用，只需要加载一次css和js资源，后续单页面应用的跳转只需要刷新局部资源。SPA内模块组件化。
+
+特点：
+
+1. 可以使用hash模式，也可以使用history模式。他们的区别是history是h5的新API，hash的url有#号，且histroy二级路由刷新会404.
+2. SPA比MPA进行页面切时会更块，加载资源更少，但当资源较多时需要优化。
+3. 公用资源只需要加载一次。
+4. SPA不利于SEO，但可以通过服务端渲染优化。
+5. 可以实现全局变量，仓库，pinia，vuex
+6. 前期开发成本高，后期易于维护。
+
+## 视图更新
+
+当数据绑定的数据更新后，vue并不会立即更新视图，而是会将依赖收集，存入数组，并去重，由于vue的异步更新，会在下一个nenxtick将回调函数一一取出并执行。
+
+
+## minxin和extends
+
+mixins提取公共代码，使用时直接将代码提取到当前组件内。
+
+## 子组件能改变父组件的数据吗？
+
+不能，vue提倡单向数据流，因为若更改了父组件的数据，可能prop的数据也会发生变化，导致错误，因此只能通过emit派发事件来更新父组件的数据。
+
+
+## 渐进式框架
+
+意思是使用框架时不强调必须完整使用框架或完全了解框架，而是可以一步一步递增的使用框架。
+
+vue对比aguler和react。
+
+## React和Vue
+
+相同之处：
+
+1. 都将注意力放在核心逻辑上，然后像状态管理，路由都交由相关库来完成。
+2. 都有代码模板，自己的构建工具解析模板
+3. 都有VitualDom，映射真实dom树。
+4. 都有props
+5. 都提倡组件化应用，将应用都拆分成一个一个的模块，且提高复用性
+
+不同：
+
+1. vue可以双向数据绑定，而react提倡单向数据绑定
+2. vue可以更快计算vdom的差异，因为跟踪了每个组件的依赖，react默认不开启这个功能
+3. react更贴近jsx、tsx
+4. vue通过proxy进行数据劫持来更新数据，不需要过多操作就有很高的性能，而react通过比较引用的方式，需要优化，否则大量回流？
+5. react可以通过HOC高阶组件进行扩展，而vue使用mixins。这是因为react组件本质就是函数，而vue是html模板解析。
+6. react有reactNATIVE 原生跨平台。
+
+## assets和static
+
+assets下的资源文件会打包压缩后上传到static下，而static直接上传，文件体积较大
+
+
+一般是template需要的资源文件放assets，第三方资源文件放入static
+
+
+## delete和vue.delete
+
+delete是删除变量，值变为空或underfined，而vue.delete直接删除数组 ，改变数组的键值。
+
+## 模板编译原理
+
+三步：解析，优化，生成
+
+1. 首先通过大量正则，将模板内的标签，属性，指令，解析成抽象语法树AST
+2. 优化：遍历AST，标记静态节点，方便diff算法跳过节点
+3. 生成render函数
+
+## mvvm的优缺点
+
+有viewmodel层，让view和model隔离，可以独自进行更改而不互相影响，而是将改变收集起来，在下一个时间点依次执行。
+
+
+能自动更新dom，依据双向数据绑定。
+
+
+缺点：
+
+1. bug难以调试，因为数据绑定，所以难以定位bug位置，不清楚是model层的错误还是view层的错误。
+2. 当model(data)较大时,不释放可能会有较大的心智负担，以及不方便维护。
+
+## v-for和v-if
+
+for的优先级高于if  也就是当for和if同时出现时，会先执行for，再执行if。
+
+想让for不执行就在外层套template，让if在这里执行。
