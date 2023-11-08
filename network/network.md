@@ -43,9 +43,21 @@ tcp分为长连接和短链接，
 
 长连接通过keepAlive来实现，设置connection：keepalive
 
-
 ## Websocket
 
 websocket是区别于http。
 
 保持全双工通信，需要先创建连接，因此四有状态协议。且有更好的二进制支持，且有扩展性。控制开销更少，请求头部信息更少。
+
+## xss和csrf
+
+> xss跨站脚本攻击，嵌入脚本获取cookei等隐私。
+
+> csrf跨站请求模拟：利用登录状态，模拟发起请求，更改数据。
+
+## xss类型
+
+反射型XSS、存储型XSS、DOM-based 型、基于字符集的 XSS、基于 Flash 的跨站 XSS、未经验证的跳转 XSS
+
+> 强缓存>协商缓存>服务器
+>

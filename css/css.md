@@ -32,3 +32,8 @@ transform:translate()
 5. grid
 6. 线性渐变：gradient
 7. border-image 图片 边框
+
+
+## scope
+
+通过data的唯一性让所有css加上data标识，父子不影响，可以穿透。
