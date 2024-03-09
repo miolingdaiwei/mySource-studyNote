@@ -3,12 +3,8 @@
 function Fun() {
     this.sex = "男"
 }
-
 Fun.prototype.fname = "ss"
 
-// let pro = Object(Fun.prototype)
-// pro.constructor = Fun
-// console.log(pro);
 
 function SonFun() {
     this.age = 18

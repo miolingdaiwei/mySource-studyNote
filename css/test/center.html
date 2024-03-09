@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+    <div class="container">
+        <div class="center-container"></div>
+    </div>
+
+
+
+</body>
+<style>
+    /* * {
+        margin: 0%;
+        padding: 0%;
+    } */
+
+    .container {
+        width: 400px;
+        height: 400px;
+        background-color: black;
+        /* display: flex;
+        justify-content: center;
+        align-items: center;    方法1*/
+
+        display: grid;
+        /* position: relative;  方法四  frid布局*/
+    }
+
+    .center-container {
+        /* position: absolute; */
+        /* top: 50%;
+        left: 50%;
+        确保左上角地点在中心 
+        transform: translate(-50%, -50%);
+        而translate则是以子盒子容器自身的长宽移动50%，那么图像也就居中了 
+        方法二  absolute加transform*/
+        width: 200px;
+        height: 200px;
+        /* top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;   方法三：absoulte,然后 位置 全部设置0，然后margin：auto*/
+        background-color: aqua;
+
+        /* align-self: center;
+        justify-self: center; 方法四  frid布局*/
+    }
+</style>
+
+</html>

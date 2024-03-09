@@ -18,11 +18,12 @@ async function fn() {
   return result;
 }
 fn().then((res) => {
-  console.log(res + " is then");
+  console.log("then sucess is " + res);
 });
 
 const timeFn = function () {
   return setTimeout(() => {
+    console.log("time");
     return "time";
   }, 2000);
 };

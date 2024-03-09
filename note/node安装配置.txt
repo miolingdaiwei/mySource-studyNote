@@ -7,7 +7,7 @@ node_mirror: https://npm.taobao.org/mirrors/node/
 
 npm_mirror: https://npm.taobao.org/mirrors/npm/
 
- 管理员权限下安装和use   node
+ 管理员权限下安装和use   node  ***********重点  后续安装也要管理员权限
 
 node 会生成一个快捷方式，它实际上是当前使用的node版本
 
